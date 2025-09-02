@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>PMB Audio Recorder</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1L22 5v6c0 5.55-3.84 10.74-9 12-5.16-1.26-9-6.45-9-12V5l10-4z"/>
+          </svg>
+          <span>PMB Recorder</span>
+        </div>
+        <div class="header-indicators">
+          <div class="recording-indicator" id="recordingIndicator" style="display: none;">
+            <div class="recording-dot"></div>
+            <span>Recording</span>
+          </div>
+          <div class="status-indicator" id="connectionStatus"></div>
+        </div>
+      </div>
+
+      <!-- Authentication -->
+      <div class="section">
+        <div class="section-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10,17 15,12 10,7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          <span>Authentication</span>
+        </div>
+        <div class="auth-area">
+          <button id="loginBtn" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+              <polyline points="10,17 15,12 10,7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+            Login to Record
+          </button>
+          <div id="userInfo" class="user-info" style="display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Repository Info -->
+      <div class="section">
+        <div class="section-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+          </svg>
+          <span>Repository</span>
+        </div>
+        <div id="repo" class="repo-info">Detecting current repository...</div>
+      </div>
+
+      <!-- Recording Controls -->
+      <div class="section">
+        <div class="section-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <path d="M12 19v4"/>
+            <path d="M8 23h8"/>
+          </svg>
+          <span>Voice Recording</span>
+        </div>
+        
+        <div class="recording-area">
+          <div class="timer-display" id="timer">00:00</div>
+          <div class="wave-indicator" id="waveIndicator"></div>
+          
+          <div class="controls">
+            <button id="startBtn" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5,3 19,12 5,21"/>
+              </svg>
+              Start Recording
+            </button>
+            <button id="stopBtn" class="btn btn-secondary" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="6" y="6" width="12" height="12"/>
+              </svg>
+              Stop
+            </button>
+          </div>
+          
+          <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="section">
+        <div id="status" class="status-message">Ready to record</div>
+        <div id="link" class="result-link"></div>
+      </div>
+
+      <!-- Settings (Collapsible) -->
+      <div class="section settings-section">
+        <button class="settings-toggle" id="settingsToggle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V6a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V12a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Settings
+        </button>
+        
+        <div class="settings-content" id="settingsContent">
+          <div class="input-group">
+            <label for="backendInput">Backend URL</label>
+            <input id="backendInput" type="url" placeholder="http://localhost:8000" />
+          </div>
+          
+          <div class="settings-actions">
+            <button id="saveCfg" class="btn btn-outline">Save Configuration</button>
+            <button id="testConnection" class="btn btn-outline">Test Connection</button>
+            <button id="permHelp" class="btn btn-outline">Microphone Permissions</button>
+          </div>
+          
+          <div id="saveMsg" class="save-message"></div>
+        </div>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

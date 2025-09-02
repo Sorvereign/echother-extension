@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "PMB Audio Recorder",
+  "version": "0.1.0",
+  "description": "Record voice notes and generate technical tickets with AI",
+  "permissions": ["storage", "tabs", "activeTab", "offscreen"],
+  "host_permissions": ["http://localhost:8000/*", "http://localhost:3000/*", "https://*/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_popup": "popup.html"},
+  "content_scripts": [{
+    "matches": ["http://localhost:3000/*"],
+    "js": ["content.js"],
+    "run_at": "document_end"
+  }],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "web_accessible_resources": [{
+    "resources": ["offscreen.html"],
+    "matches": ["<all_urls>"]
+  }]
+}
