@@ -33,6 +33,34 @@ window.addEventListener('message', (event) => {
       console.error('Error sending message to background from content script:', error);
     });
   }
+
+  // Bridge: start recording via background/offscreen
+  if (event.data.type === 'START_EXTENSION_RECORDING') {
+    (async () => {
+      try {
+        // init offscreen and start
+        const initResp = await chrome.runtime.sendMessage({ type: 'init-recording' });
+        if (!initResp?.success) throw new Error(initResp?.error || 'init failed');
+        const startResp = await chrome.runtime.sendMessage({ type: 'start-recording' });
+        if (!startResp?.success) throw new Error(startResp?.error || 'start failed');
+        window.postMessage({ type: 'EXTENSION_RECORDING_STARTED', success: true }, '*');
+      } catch (err) {
+        window.postMessage({ type: 'EXTENSION_RECORDING_STARTED', success: false, error: err?.message || String(err) }, '*');
+      }
+    })();
+  }
+
+  if (event.data.type === 'STOP_EXTENSION_RECORDING') {
+    (async () => {
+      try {
+        const stopResp = await chrome.runtime.sendMessage({ type: 'stop-recording' });
+        if (!stopResp?.success) throw new Error(stopResp?.error || 'stop failed');
+        window.postMessage({ type: 'EXTENSION_RECORDING_STOPPED', success: true }, '*');
+      } catch (err) {
+        window.postMessage({ type: 'EXTENSION_RECORDING_STOPPED', success: false, error: err?.message || String(err) }, '*');
+      }
+    })();
+  }
 });
 
 // Send initial tab update
